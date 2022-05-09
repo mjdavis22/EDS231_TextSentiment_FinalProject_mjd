@@ -33,7 +33,8 @@ The following **packages** were utilized:
 | lubridate  | pdftools   | quanteda       |
 | readr      | reshape2   | sentiment      |
 | tidyr      | tidytext   | tidyverse.     |
-| tm         | topicmodels| tsne           |
+| tm         | topicmodels| tsne           | 
+| LexisNexisTools    |         |           |
 |     |         |           |
 
 ### Data

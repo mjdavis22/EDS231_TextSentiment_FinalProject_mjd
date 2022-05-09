@@ -1,0 +1,51 @@
+---
+title: "Final Project"
+author: "Paloma Cartwright, Allie Cole, Wylie Hampson, Ben Moscona-Remnitz, Julia Parish"
+date: '2022-06-01'
+header-includes:
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+output: 
+  pdf_document:
+    extra_dependencies: ["float"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.pos='!H')
+```
+
+# Project Title
+
+This text sentiment analysis was completed as an assignment for the course, Environmental Data Science 231: Text and Sentiment Analysis for Environmental Problems. The data was sourced from  ...
+
+Original assignment instructions can be found [here](https://maro406.github.io/EDS_231-text-sentiment/Group_Project.html)
+
+### Load Libraries
+
+```{r packages}
+#install packages as necessary, then load libraries
+if (!require(librarian)){
+  install.packages("librarian")
+  library(librarian)
+}
+
+librarian::shelf(here,
+                 igraph,
+                 kableExtra,
+                 ldatuning,
+                 LDAvis,
+                 lubridate,
+                 pdftools,
+                 quanteda,
+                 quanteda.texplots,
+                 quanteda.textstats,
+                 readr,
+                 reshape2,
+                 sentiment,
+                 tidyr,
+                 tidytext,
+                 tidyverse,
+                 tm,
+                 topicmodels,
+                 tsne)
+```

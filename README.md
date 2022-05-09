@@ -1,6 +1,6 @@
 # EDS231 TextSentiment Final Project
 
-### Authors: Paloma Cartwright, Allie Cole, Wylie Hampson, Ben Moscona-Remnitz ,Julia Parish
+### Authors: Paloma Cartwright, Allie Cole, Wylie Hampson, Ben Moscona-Remnitz, Julia Parish
 
 ## Assignment:
 

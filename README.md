@@ -32,7 +32,7 @@ The following **packages** were utilized:
 | kableExtra | ldatuning  | LDAvis.        |
 | lubridate  | pdftools   | quanteda       |
 | readr      | reshape2   | sentiment      |
-| tidyr      | tidytext   | tidyverse.     |
+| tidyr      | tidytext   | tidyverse      |
 | tm         | topicmodels| tsne           | 
 | LexisNexisTools    |         |           |
 |     |         |           |

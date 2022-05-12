@@ -8,7 +8,9 @@ Original assignment instructions can be found [here](https://maro406.github.io/E
 
 ### Motivation and Goal
 
-**Analysis Project Question:** How have sustainable farming practices changed over time and how has this been mirrored in public and academic sentiment in the United States?
+**Analysis Project Question:** 
+
+How have sustainable farming practices changed over time and how has this been mirrored in public sentiment in the United States?
 
 **Why is this question important?**
 
@@ -16,9 +18,10 @@ This question is important because of the push for change in large scale agricul
 
 **Does it fill gaps in our knowledge?**
 
-This will help inform the differences in sentiment between academia and the public.
+This will help inform the differences in public sentiment over time.
 
 **To which audience(s) would it be of interest?**
+
 This would be of interest to state departments, activist groups, etc. 
 
 
@@ -39,4 +42,4 @@ The following **packages** were utilized:
 
 ### Data
 
-Data was sourced from 
+Data was sourced from news articles between the years 1990 and 2021 on Nexis Uni. Search terms were intergrated pest management and sustainable farming.

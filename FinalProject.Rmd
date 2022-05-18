@@ -55,13 +55,13 @@ librarian::shelf(here,
 # test data read in
 
 ```{r}
-folder <- here("data/")
+folder <- here("data/text_data")
 
-farm_data <- list.files(pattern = ".DOCX", path = folder, 
+text_data <- list.files(pattern = ".DOCX", path = folder, 
                         full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
 
 # lnt_read = read in a LexisNexis file
-data <- lnt_read(farm_data) 
+data <- lnt_read(text_data) 
 ```
 
 ```{r}
@@ -72,10 +72,12 @@ paragraphs_df <- data@paragraphs
 
 ```{r}
 
-headline_df<- data_frame(element_id = seq(1:length(meta_df$Headline)), Date = meta_df$Date, 
-                  Headline = meta_df$Headline)
+headline_df<- data_frame(element_id = seq(1:length(meta_df$Headline)), 
+                         Date = meta_df$Date, 
+                         Headline = meta_df$Headline)
 
-paragraphs_df <- data_frame(element_id = paragraphs_df$Art_ID, Text  = paragraphs_df$Paragraph)
+paragraphs_df <- data_frame(element_id = paragraphs_df$Art_ID, 
+                            Text  = paragraphs_df$Paragraph)
 
 ipm_data <- inner_join(headline_df, paragraphs_df, by = "element_id")
 ```

@@ -83,4 +83,87 @@ ipm_data <- inner_join(headline_df, paragraphs_df, by = "element_id")
 ```
 
 
+### Global FAO data on farming practices over time
+```{r Import Land Use Data}
+farming_practices_full <- list.files(path = "data/farming_practices/", full.names = T)
+farming_practices <- list.files(path = "data/farming_practices/", full.names = F)
+practice_names <- str_replace(farming_practices, "fao_", "") %>% str_replace(".csv", "")
+practices_df <- map(farming_practices_full, read_csv) %>% 
+        map(~ select(., Area, Element, Item, Year, Unit, Value)) %>% 
+        reduce(rbind)
+```
+
+```{r Summaries of Land Use}
+summary_practices <- practices_df %>% 
+        group_by(Item, Year, Unit) %>% 
+        filter(Unit != "%") %>% 
+        summarize(value = sum(Value))
+```
+
+```{r Land Use Graphs}
+graph_practices <- function(topic) {
+        
+filtered_practice <- summary_practices %>% 
+        filter(Item == topic)
+
+filtered_practice %>% 
+        ggplot(aes(x = Year, y = value)) + 
+        geom_line() + 
+        expand_limits(y = 0) +
+        ylab(paste(filtered_practice$Unit[1], topic))
+}
+
+topics <- summary_practices %>%
+        ungroup() %>% 
+        select(Item) %>% 
+        distinct() %>% 
+        pull()
+
+practices_graphs <- map(topics, graph_practices)
+```
+
+```{r Export Practices Graphs}
+filenames_practices_graphs <- paste0(topics, ".pdf")
+ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "in")
+map2(filenames_practices_graphs, practices_graphs, ggsave_med)
+```
+
+Let's adjust the summary we made earlier by adding a country grouping
+```{r Summaries of Land Use by Country}
+summary_practices <- practices_df %>% 
+        group_by(Item, Year, Unit, Area) %>% 
+        filter(Unit != "%") %>% 
+        summarize(value = sum(Value))
+```
+
+Now, let's filter our data before we graph to only include the U.S.
+```{r Just the U.S.}
+graph_practices <- function(topic, country) {
+        
+filtered_practice <- summary_practices %>% 
+        filter(Item == topic, Area == country)
+
+filtered_practice %>% 
+        ggplot(aes(x = Year, y = value)) + 
+        geom_line() + 
+        expand_limits(y = 0) +
+        ylab(paste(filtered_practice$Unit[1], topic))
+}
+
+topics <- summary_practices %>%
+        ungroup() %>% 
+        select(Item) %>% 
+        distinct() %>% 
+        pull()
+
+practices_graphs <- map2(topics, "United States of America", graph_practices)
+```
+
+```{r Export Just the U.S.}
+filenames_practices_graphs <- paste0(topics, "us_only", ".pdf")
+ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "in")
+map2(filenames_practices_graphs, practices_graphs, ggsave_med)
+```
+
+
 

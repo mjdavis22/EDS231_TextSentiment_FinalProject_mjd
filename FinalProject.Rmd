@@ -48,7 +48,8 @@ librarian::shelf(here,
                  tidyverse,
                  tm,
                  topicmodels,
-                 tsne)
+                 tsne, 
+                 janitor)
 ```
 
 
@@ -84,6 +85,49 @@ paragraphs_df <- data_frame(element_id = paragraphs_df$Art_ID,
 ipm_data <- inner_join(headline_df, paragraphs_df, by = "element_id")
 ```
 
+```{r}
+my_files <- list.files(pattern = ".docx", path = here("data", "text_data"),
+                       full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
+dat <- lnt_read(my_files) #Object of class 'LNT output'
+
+meta_df <- dat@meta
+articles_df <- dat@articles
+paragraphs_df <- dat@paragraphs
+
+dat2<- data_frame(element_id = seq(1:length(meta_df$Headline)), Date = meta_df$Date, Headline = meta_df$Headline)
+
+paragraphs_dat <- data_frame(element_id = paragraphs_df$Art_ID, 
+                             Text  = paragraphs_df$Paragraph)
+
+# join the headlines with the paragraphs
+dat3 <- inner_join(dat2, paragraphs_dat, by = "element_id") %>% clean_names()
+
+```
+
+```{r}
+dat3 <- subset(dat3, text != " ")
+dat3 <- dat3[!duplicated(dat3$text),]
+dat3 <- dat3[!grepl("http", dat3$text),]
+dat3 <- dat3[!grepl("Article Rating", dat3$text),]
+dat3 <- dat3[!grepl("--IANS", dat3$text),]
+dat3 <- dat3[!grepl("ZRL: Zero Risk Level", dat3$text),]
+dat3 <- dat3[!grepl("ZOI: Zone Of Incorporation", dat3$text),]
+dat3 <- dat3[!grepl("Contact", dat3$text),]
+dat3 <- dat3[!grepl(" - ", dat3$text),]
+dat3 <- dat3[!grepl("By", dat3$text),]
+dat3 <- dat3[!grepl("Guest", dat3$text),]
+dat3 <- dat3[!grepl("Share on", dat3$text),]
+dat3 <- dat3[!grepl("Mar ", dat3$text),]
+dat3 <- dat3[!grepl("Apr ", dat3$text),]
+dat3 <- dat3[!grepl("zones", dat3$text),]
+dat3 <- dat3[!grepl("Apr ", dat3$text),]
+dat3 <- dat3[!grepl("Apr ", dat3$text),]
+dat3 <- dat3[!grepl("Apr ", dat3$text),]
+dat3 <- dat3[!grepl("Apr ", dat3$text),]
+
+dat3 <- dat3 %>% 
+  drop_na()
+```
 
 # Global FAO data on farming practices over time
 

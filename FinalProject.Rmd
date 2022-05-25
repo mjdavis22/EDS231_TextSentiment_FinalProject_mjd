@@ -14,7 +14,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.pos='!H')
 ```
 
-# Project Title
+# Sentiment of Sustainable Agriculture over 30 year period
 
 This text sentiment analysis was completed as an assignment for the course, Environmental Data Science 231: Text and Sentiment Analysis for Environmental Problems. The data was sourced from  ...
 
@@ -52,22 +52,24 @@ librarian::shelf(here,
 ```
 
 
-# test data read in
+# Nexis Uni Data - Sustainable Agriculture Sentiment past 30 years
+
+Data consists of news articles, law reviews, and journals using the Nexis Uni database, and published between the years 1990-2021 using the search terms “Integrated Pest Management” and “sustainable farming.” Due to Nexis Uni limiting article returns to 100 documents per search, we collected the 100 most relevant articles from each year. When a year returned less than 100 articles for the search terms, all returned articles were collected. Articles were not geographically restricted, but they were all published in English. 
 
 ```{r}
-folder <- here("data/text_data")
+nu_folder <- here("data/text_data")
 
-text_data <- list.files(pattern = ".DOCX", path = folder, 
+nu_data <- list.files(pattern = ".DOCX", path = nu_folder, 
                         full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
 
 # lnt_read = read in a LexisNexis file
-data <- lnt_read(text_data) 
+nu_data <- lnt_read(nu_data) 
 ```
 
 ```{r}
-meta_df <- data@meta
-articles_df <- data@articles
-paragraphs_df <- data@paragraphs
+meta_df <- nu_data@meta
+articles_df <- nu_data@articles
+paragraphs_df <- nu_data@paragraphs
 ```
 
 ```{r}
@@ -83,7 +85,7 @@ ipm_data <- inner_join(headline_df, paragraphs_df, by = "element_id")
 ```
 
 
-### Global FAO data on farming practices over time
+## Global FAO data on farming practices over time
 ```{r Import Land Use Data}
 farming_practices_full <- list.files(path = "data/farming_practices/", full.names = T)
 farming_practices <- list.files(path = "data/farming_practices/", full.names = F)

@@ -171,5 +171,60 @@ ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "i
 map2(filenames_practices_graphs, practices_graphs, ggsave_med)
 ```
 
+# Number of Articles over time.
+
+Here we are looking at the number of articles that were published from 1990-2021. These articles were found using the Nexis Uni Database using the search terms "Integrated Pest Management" and "Sustainable farming".
+
+```{r}
+# Create a table that contains the total number of published articles for each year.
+articles_by_year <- data.frame(year = 1990:2021, n_articles = 1)
+
+# Add number of publications for each year.
+articles_by_year[1,2] <- 9
+articles_by_year[2,2] <- 10
+articles_by_year[3,2] <- 7
+articles_by_year[4,2] <- 36
+articles_by_year[5,2] <- 57
+articles_by_year[6,2] <- 76
+articles_by_year[7,2] <- 89
+articles_by_year[8,2] <- 76
+articles_by_year[9,2] <- 67
+articles_by_year[10,2] <- 70
+articles_by_year[11,2] <- 52
+articles_by_year[12,2] <- 47
+articles_by_year[13,2] <- 56
+articles_by_year[14,2] <- 69
+articles_by_year[15,2] <- 70
+articles_by_year[16,2] <- 78
+articles_by_year[17,2] <- 82
+articles_by_year[18,2] <- 100
+articles_by_year[19,2] <- 176
+articles_by_year[20,2] <- 207
+articles_by_year[21,2] <- 227
+articles_by_year[22,2] <- 234
+articles_by_year[23,2] <- 386
+articles_by_year[24,2] <- 381
+articles_by_year[25,2] <- 411
+articles_by_year[26,2] <- 485
+articles_by_year[27,2] <- 696
+articles_by_year[28,2] <- 606
+articles_by_year[29,2] <- 710
+articles_by_year[30,2] <- 905
+articles_by_year[31,2] <- 1000
+articles_by_year[32,2] <- 1118
+
+```
+
+```{r}
+# Now plot the above data.
+ggplot(articles_by_year, aes(x = year, y = n_articles)) +
+  geom_line(col = "darkgreen") +
+  labs(title = "Number of Articles Published by Year",
+       subtitle = 'Search terms "Integrated pest management" and "Sustainable farming".',
+       x = "Year",
+       y = "Number of Articles Published")
+```
+
+
 
 

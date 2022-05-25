@@ -85,7 +85,11 @@ ipm_data <- inner_join(headline_df, paragraphs_df, by = "element_id")
 ```
 
 
-## Global FAO data on farming practices over time
+# Global FAO data on farming practices over time
+
+Data was collected from the Food and Agriculture Organization (FAO) of the United Nations on global farming practices since 1960. The data was collected from 1990 to 2021 from the FAO data service website, and combined into one csv file. 
+
+
 ```{r Import Land Use Data}
 farming_practices_full <- list.files(path = "data/farming_practices/", full.names = T)
 farming_practices <- list.files(path = "data/farming_practices/", full.names = F)

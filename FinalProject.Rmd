@@ -71,7 +71,9 @@ meta_df <- dat@meta
 articles_df <- dat@articles
 paragraphs_df <- dat@paragraphs
 
-dat2<- data_frame(element_id = seq(1:length(meta_df$Headline)), Date = meta_df$Date, Headline = meta_df$Headline) %>% 
+dat2<- data_frame(element_id = seq(1:length(meta_df$Headline)),
+                  Date = meta_df$Date, 
+                  Headline = meta_df$Headline) %>% 
   clean_names() %>% 
   drop_na()
 
@@ -81,11 +83,11 @@ paragraphs_dat <- data_frame(element_id = paragraphs_df$Art_ID,
                              Text  = paragraphs_df$Paragraph)
 
 # join the headlines with the paragraphs
-dat3 <- inner_join(dat2, paragraphs_dat, by = "element_id") %>% clean_names() %>% 
+dat3 <- inner_join(dat2, paragraphs_dat, by = "element_id") %>% 
+  clean_names() %>% 
   drop_na()
 
 dat3$date[dat3$date == "0008-05-13"] <- "2008-05-13"
-  
 
 ```
 
@@ -93,8 +95,8 @@ dat3$date[dat3$date == "0008-05-13"] <- "2008-05-13"
 dat3 <- subset(dat3, text != " ")
 dat3 <- dat3[!duplicated(dat3$text),]
 dat3 <- dat3[!grepl("http", dat3$text),]
+dat3 <- dat3[!grepl("www.", dat3$text),]
 dat3 <- dat3[!grepl("Article Rating", dat3$text),]
-dat3 <- dat3[!grepl("--IANS", dat3$text),]
 dat3 <- dat3[!grepl("ZRL: Zero Risk Level", dat3$text),]
 dat3 <- dat3[!grepl("ZOI: Zone Of Incorporation", dat3$text),]
 dat3 <- dat3[!grepl("Contact", dat3$text),]
@@ -106,7 +108,6 @@ dat3 <- dat3[!grepl("Mar ", dat3$text),]
 dat3 <- dat3[!grepl("Apr ", dat3$text),]
 dat3 <- dat3[!grepl("zones", dat3$text),]
 dat3 <- dat3[!grepl("-", dat3$text),]
-dat3 <- dat3[!grepl(" -", dat3$text),]
 dat3 <- dat3[!grepl("WASHINGTON, D.C.", dat3$text),]
 dat3 <- dat3[!grepl("No19. Pest Controllers", dat3$text),]
 dat3 <- dat3[!grepl("YOUR TOWN", dat3$text),]

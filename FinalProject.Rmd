@@ -165,6 +165,9 @@ headline_sent <- ggplot(data = sent_df_group, aes(x = year, y = n, color = polar
 headline_sent
 ```
 
+```{r}
+#ggsave("graphs/headline_sentiment.png", width = 10, height = 6, units = "in")
+```
 
 \newpage
 
@@ -218,6 +221,11 @@ text_sent <- ggplot(sent_score, aes(x = year)) +
 text_sent
 ```
 
+```{r}
+#ggsave("graphs/text_sentiment.png", width = 10, height = 6, units = "in")
+```
+
+
 ## Perform Sentiment Analysis using the NRC Sentiment Words
 
 ```{r, message=FALSE}
@@ -253,6 +261,11 @@ slr_nrc_sent_graph <- slr_nrc_sent %>%
 
 slr_nrc_sent_graph
 ```
+
+```{r}
+#ggsave("graphs/nrc_sentiment.png", width = 10, height = 6, units = "in")
+```
+
 
 ### Calculate the Distribution of Sentiment
 
@@ -290,6 +303,11 @@ sent_words <- ggplot(data = slr_nrc_sent2, aes(x = year, y = percentage, color =
 
 sent_words
 ```
+
+```{r}
+#ggsave("graphs/sentiment_words.png", width = 10, height = 6, units = "in")
+```
+
 
 # Number of Sustainable Farming News Articles: 1990 - 2021
 
@@ -348,6 +366,11 @@ articles_plot <- ggplot(articles_by_year, aes(x = year, y = n_articles)) +
 
 articles_plot
 ```
+
+```{r}
+#ggsave("graphs/articles_plot.png", width = 10, height = 6, units = "in")
+```
+
 
 \newpage
 

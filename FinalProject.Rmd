@@ -398,7 +398,7 @@ topics <- summary_practices %>%
 practices_graphs <- map(topics, graph_practices)
 ```
 
-```{r Export Practices Graphs, message=FALSE}
+```{r Export Practices Graphs}
 filenames_practices_graphs <- paste0(topics, ".pdf")
 
 ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "in")

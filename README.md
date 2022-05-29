@@ -31,14 +31,15 @@ The following **packages** were utilized:
 
 |            |            |                |
 | ---------- | -----------| ---------------|
-| here       | igraph     | jsonlite       | 
-| kableExtra | ldatuning  | LDAvis.        |
-| lubridate  | pdftools   | quanteda       |
-| readr      | reshape2   | sentiment      |
+| here       | igraph     |  kableExtra    | 
+| janitor    | LexisNexisTools| ldatuning  |
+| LDAvis     | lubridate  |  pdftools      |
+| quanteda   | quanteda.textplots | quanteda.textstats |
+| readr      | reshape2   | sentimentr     |
 | tidyr      | tidytext   | tidyverse      |
-| tm         | topicmodels| tsne           | 
-| LexisNexisTools    |         |           |
-|     |         |           |
+| tm         | topicmodels | tsne          |
+|            |            |                |
+
 
 ### Data
 

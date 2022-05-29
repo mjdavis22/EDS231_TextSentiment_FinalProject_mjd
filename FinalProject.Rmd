@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.pos='!H
 
 # Sentiment of Sustainable Agriculture over 30 year period
 
-This text sentiment analysis was completed as an assignment for the course, Environmental Data Science 231: Text and Sentiment Analysis for Environmental Problems. The data was sourced from  ...
+This text sentiment analysis was completed as an assignment for the course, Environmental Data Science 231: Text and Sentiment Analysis for Environmental Problems. The data was sourced from  Nexis Uni database and the Food and Agriculture Organization (FAO) of the United Nations.
 
 Original assignment instructions can be found [here](https://maro406.github.io/EDS_231-text-sentiment/Group_Project.html)
 
@@ -31,6 +31,7 @@ if (!require(librarian)){
 
 librarian::shelf(here,
                  igraph,
+                 janitor,
                  kableExtra,
                  ldatuning,
                  LDAvis,
@@ -48,29 +49,30 @@ librarian::shelf(here,
                  tidyverse,
                  tm,
                  topicmodels,
-                 tsne, 
-                 janitor)
+                 tsne)
 ```
 
+\newpage
 
 # Nexis Uni Data - Sustainable Agriculture Sentiment past 30 years
 
-Data consists of news articles, law reviews, and journals using the Nexis Uni database, and published between the years 1990-2021 using the search terms “Integrated Pest Management” and “sustainable farming.” Due to Nexis Uni limiting article returns to 100 documents per search, we collected the 100 most relevant articles from each year. When a year returned less than 100 articles for the search terms, all returned articles were collected. Articles were not geographically restricted, but they were all published in English. 
+Data consists of news articles from the Nexis Uni database, and published between the years 1990-2021 using the search terms “Integrated Pest Management” and “sustainable farming.” Due to Nexis Uni limiting article returns to 100 documents per search, we collected the 100 most relevant articles from each year. When a year returned less than 100 articles for the search terms, all returned articles were collected. Articles were not geographically restricted, but they were all published in English. 
 
 
-```{r}
+```{r read in Nexis files}
 my_files <- list.files(pattern = ".docx", path = here("data", "text_data"),
                        full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
 dat <- lnt_read(my_files) #Object of class 'LNT output'
 
 ```
 
-```{r}
-
+```{r create Nexis dataframes}
 meta_df <- dat@meta
 articles_df <- dat@articles
 paragraphs_df <- dat@paragraphs
+```
 
+```{r}
 dat2<- data_frame(element_id = seq(1:length(meta_df$Headline)),
                   Date = meta_df$Date, 
                   Headline = meta_df$Headline) %>% 
@@ -81,7 +83,10 @@ dat2$date[dat2$date == "0008-05-13"] <- "2008-05-13"
 
 paragraphs_dat <- data_frame(element_id = paragraphs_df$Art_ID, 
                              Text  = paragraphs_df$Paragraph)
+```
 
+
+```{r}
 # join the headlines with the paragraphs
 dat3 <- inner_join(dat2, paragraphs_dat, by = "element_id") %>% 
   clean_names() %>% 
@@ -117,7 +122,7 @@ dat3 <- dat3 %>%
   drop_na()
 ```
 
-# Calculate the Polarity of the Headlines 
+## Calculate the Polarity of the Headlines 
 
 ```{r}
 mytext <- get_sentences(dat2$headline)
@@ -142,24 +147,28 @@ sent_df_group <- sent_df %>%
   drop_na()
 ```
 
-# Create a Plot of Headline Sentiment Polarity 
+## Create a Plot of Headline Sentiment Polarity 
 
-```{r, fig.cap="News media sentiment from 1990 to 2021 based on headlines with positive (green), negative (red), and neutral (grey) sentiment."}
-ggplot(data = sent_df_group, aes(x = year, y = n, color = polarity)) + 
+```{r, fig.cap="News media sentiment from 1990 to 2021 based on headlines with positive (green), negative (red), and neutral (grey) sentiment. Data Source: Nexis Uni."}
+headline_sent <- ggplot(data = sent_df_group, aes(x = year, y = n, color = polarity)) + 
   geom_line(size = 1.5) + 
   labs(y = "Number of Headlines",
        x = "Year",
        color = "Sentiment", 
-       title = "Developed Media Sentiment on IPM") + 
+       title = "Sustainable Farming News Headlines Sentiment Analysis",
+       subtitle = "Integrated Pest Management & Sustainable Farming",
+       caption = "Data Source: Nexis Uni") + 
   scale_color_manual(values = c("darkgreen", "gray", "red"),
                      labels = c("Positive", "Neutral", "Negative")) + 
   theme_classic()
+
+headline_sent
 ```
 
 
 \newpage
 
-# Unnest Data into Words
+## Unnest Data into Words
 
 ```{r}
 bing_sent <- get_sentiments('bing')
@@ -172,7 +181,7 @@ text_words <- dat3  %>%
 
 ```
 
-# Calculate the Sentiment Score of text
+## Calculate the Sentiment Score of Text
 
 This calculation was done by counting the number of sentiment words occurring per day. 
 
@@ -191,26 +200,27 @@ sent_score <- sent_score %>%
   arrange(desc(raw_score))
 ```
 
-# Create a Plot of Sentiment Scores 
+## Create a Plot of Sentiment Scores 
 
-```{r}
+```{r, fig.cap="News article text sentiment analysis from 1990 to 2021. The raw sentiment score (purple) and offset sentiment score (red) ... Data Source: Nexis Uni."}
 
-ggplot(sent_score, aes(x = year)) +
+text_sent <- ggplot(sent_score, aes(x = year)) +
   geom_bar(aes(y = raw_score), stat = 'identity', fill = 'slateblue3') +
   geom_bar(aes(y = offset_score), stat = 'identity', fill = 'red4') +
   geom_hline(yintercept = sent_score$offset[1], linetype = 'dashed', size = .5) +
   theme_classic() +
-  theme(axis.title.y = element_blank()) +
-  labs(title = 'Sentiment analysis',
-       y = 'Sentiment score', 
+  labs(title = 'News Article Text Sentiment Analysis',
+       subtitle = "Integrated Pest Management & Sustainable Farming",
+       caption = "Data Source: Nexis Uni",
+       y = 'Sentiment Score', 
        x = "Date")
+
+text_sent
 ```
 
-
-# Perform Sentiment Analysis using the NRC Sentiment Words
+## Perform Sentiment Analysis using the NRC Sentiment Words
 
 ```{r, message=FALSE}
-
 nrc_sent <- get_sentiments('nrc')
 
 # restart with the initial data 
@@ -224,7 +234,10 @@ slr_nrc_sent <- dat3  %>%
 
 # remove the positive and negative sentiments from the list
 slr_nrc_sent <- subset(slr_nrc_sent, !(sentiment %in% c("positive", "negative")))
+```
 
+
+```{r, fig.cap="Data Source: Nexis Uni"}
 slr_nrc_sent_graph <- slr_nrc_sent %>% 
   group_by(sentiment) %>%
   slice_max(n, n = 20) %>% 
@@ -233,8 +246,10 @@ slr_nrc_sent_graph <- slr_nrc_sent %>%
   ggplot(aes(n, word, fill = sentiment)) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~sentiment, scales = "free_y") +
-  labs(x = "Contribution to sentiment",
-       y = NULL)
+  labs(x = "Contribution to Sentiment",
+       y = NULL,
+       caption = "Data Source: Nexis Uni, NRC Emotion Lexicon") +
+  theme_minimal()
 
 slr_nrc_sent_graph
 ```
@@ -242,7 +257,6 @@ slr_nrc_sent_graph
 ### Calculate the Distribution of Sentiment
 
 ```{r}
- 
 slr_nrc_sent2 <- slr_nrc_sent %>% 
   group_by(year, sentiment) %>% 
   summarise(total_n = sum(n)) %>% 
@@ -263,106 +277,23 @@ slr_nrc_sent2 <- slr_nrc_sent2 %>%
 
 ### Daily Percentage of Sentiment Words 
 
-```{r}
-ggplot(data = slr_nrc_sent2, aes(x = year, y = percentage, color = sentiment)) + 
+```{r, fig.cap="Data Source: Nexis Uni, NRC Emotion Lexicon"}
+sent_words <- ggplot(data = slr_nrc_sent2, aes(x = year, y = percentage, color = sentiment)) + 
   geom_smooth(method = lm, se = FALSE) + 
   theme_classic() + 
   labs(x = "Date", 
        y = "Daily Percentage of Sentiment", 
        color = "Sentiment", 
-       title = "Sentiment Analysis") 
+       title = "Sustainable Farming News Article Sentiment Analysis",
+       subtitle = "NRC Emotion Lexicon",
+       caption = "Data Source: Nexis Uni, NRC Emotion Lexicon") 
+
+sent_words
 ```
 
+# Number of Sustainable Farming News Articles: 1990 - 2021
 
-# Global FAO data on farming practices over time
-
-Data was collected from the Food and Agriculture Organization (FAO) of the United Nations on global farming practices since 1960. The data was collected from 1990 to 2021 from the FAO data service website, and combined into one csv file. 
-
-
-```{r Import Land Use Data}
-farming_practices_full <- list.files(path = "data/farming_practices/", full.names = T)
-farming_practices <- list.files(path = "data/farming_practices/", full.names = F)
-practice_names <- str_replace(farming_practices, "fao_", "") %>% str_replace(".csv", "")
-practices_df <- map(farming_practices_full, read_csv) %>% 
-        map(~ select(., Area, Element, Item, Year, Unit, Value)) %>% 
-        reduce(rbind)
-```
-
-```{r Summaries of Land Use}
-summary_practices <- practices_df %>% 
-        group_by(Item, Year, Unit) %>% 
-        filter(Unit != "%") %>% 
-        summarize(value = sum(Value))
-```
-
-```{r Land Use Graphs}
-graph_practices <- function(topic) {
-        
-filtered_practice <- summary_practices %>% 
-        filter(Item == topic)
-
-filtered_practice %>% 
-        ggplot(aes(x = Year, y = value)) + 
-        geom_line() + 
-        expand_limits(y = 0) +
-        ylab(paste(filtered_practice$Unit[1], topic))
-}
-
-topics <- summary_practices %>%
-        ungroup() %>% 
-        select(Item) %>% 
-        distinct() %>% 
-        pull()
-
-practices_graphs <- map(topics, graph_practices)
-```
-
-```{r Export Practices Graphs}
-filenames_practices_graphs <- paste0(topics, ".pdf")
-ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "in")
-map2(filenames_practices_graphs, practices_graphs, ggsave_med)
-```
-
-Let's adjust the summary we made earlier by adding a country grouping
-```{r Summaries of Land Use by Country}
-summary_practices <- practices_df %>% 
-        group_by(Item, Year, Unit, Area) %>% 
-        filter(Unit != "%") %>% 
-        summarize(value = sum(Value))
-```
-
-Now, let's filter our data before we graph to only include the U.S.
-```{r Just the U.S.}
-graph_practices <- function(topic, country) {
-        
-filtered_practice <- summary_practices %>% 
-        filter(Item == topic, Area == country)
-
-filtered_practice %>% 
-        ggplot(aes(x = Year, y = value)) + 
-        geom_line() + 
-        expand_limits(y = 0) +
-        ylab(paste(filtered_practice$Unit[1], topic))
-}
-
-topics <- summary_practices %>%
-        ungroup() %>% 
-        select(Item) %>% 
-        distinct() %>% 
-        pull()
-
-practices_graphs <- map2(topics, "United States of America", graph_practices)
-```
-
-```{r Export Just the U.S.}
-filenames_practices_graphs <- paste0(topics, "us_only", ".pdf")
-ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "in")
-map2(filenames_practices_graphs, practices_graphs, ggsave_med)
-```
-
-# Number of Articles over time.
-
-Here we are looking at the number of articles that were published from 1990-2021. These articles were found using the Nexis Uni Database using the search terms "Integrated Pest Management" and "Sustainable farming".
+Here we are looking at the number of articles that were published from 1990-2021. These articles were found using the Nexis Uni database using the search terms "Integrated Pest Management" and "sustainable farming".
 
 ```{r}
 # Create a table that contains the total number of published articles for each year.
@@ -404,16 +335,114 @@ articles_by_year[32,2] <- 1118
 
 ```
 
-```{r}
+```{r, fig.cap="Trend of news articles that include the search terms 'Intergrated Pest Managment' and 'sustainable farming' over time from 1990 to 2021. Data Source: Nexis Uni"}
 # Now plot the above data.
-ggplot(articles_by_year, aes(x = year, y = n_articles)) +
-  geom_line(col = "darkgreen") +
+articles_plot <- ggplot(articles_by_year, aes(x = year, y = n_articles)) +
+  geom_line(size = 1.5, col = "darkgreen") +
   labs(title = "Number of Articles Published by Year",
-       subtitle = 'Search terms "Integrated pest management" and "Sustainable farming".',
+       subtitle = 'Search terms "Integrated Pest Management" and "Sustainable Farming".',
+       caption = "Data: Nexis Uni",
        x = "Year",
-       y = "Number of Articles Published")
+       y = "Number of Articles Published") + 
+  theme_classic()
+
+articles_plot
 ```
 
+\newpage
+
+# Global FAO data on farming practices over time
+
+Data was collected from the Food and Agriculture Organization (FAO) of the United Nations on global farming practices since 1960. The data was collected from 1990 to 2021 from the FAO data service website, and combined into one csv file. 
 
 
+```{r Import Land Use Data}
+farming_practices_full <- list.files(path = "data/farming_practices/", full.names = T)
+
+farming_practices <- list.files(path = "data/farming_practices/", full.names = F)
+
+practice_names <- str_replace(farming_practices, "fao_", "") %>% str_replace(".csv", "")
+
+practices_df <- map(farming_practices_full, read_csv) %>% 
+        map(~ select(., Area, Element, Item, Year, Unit, Value)) %>% 
+        reduce(rbind)
+```
+
+```{r Summaries of Land Use}
+summary_practices <- practices_df %>% 
+        group_by(Item, Year, Unit) %>% 
+        filter(Unit != "%") %>% 
+        summarize(value = sum(Value))
+```
+
+```{r Land Use Graphs}
+graph_practices <- function(topic) {
+        
+filtered_practice <- summary_practices %>% 
+        filter(Item == topic)
+
+filtered_practice %>% 
+        ggplot(aes(x = Year, y = value)) + 
+        geom_line(size = 1.5, color = "darkgreen") + 
+        expand_limits(y = 0) +
+        ylab(paste(filtered_practice$Unit[1], topic)) +
+        theme_classic()
+}
+
+topics <- summary_practices %>%
+        ungroup() %>% 
+        select(Item) %>% 
+        distinct() %>% 
+        pull()
+
+practices_graphs <- map(topics, graph_practices)
+```
+
+```{r Export Practices Graphs, message=FALSE}
+filenames_practices_graphs <- paste0(topics, ".pdf")
+
+ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "in")
+
+map2(filenames_practices_graphs, practices_graphs, ggsave_med)
+```
+
+Let's adjust the summary we made earlier by adding a country grouping
+```{r Summaries of Land Use by Country}
+summary_practices <- practices_df %>% 
+        group_by(Item, Year, Unit, Area) %>% 
+        filter(Unit != "%") %>% 
+        summarize(value = sum(Value))
+```
+
+Now, let's filter our data before we graph to only include the U.S.
+```{r Just the U.S.}
+graph_practices <- function(topic, country) {
+        
+filtered_practice <- summary_practices %>% 
+        filter(Item == topic, Area == country)
+
+filtered_practice %>% 
+        ggplot(aes(x = Year, y = value)) + 
+        geom_line(size = 1.5, color = "darkgreen") + 
+        expand_limits(y = 0) +
+        ylab(paste(filtered_practice$Unit[1], topic)) +
+        theme_classic()
+}
+
+topics <- summary_practices %>%
+        ungroup() %>% 
+        select(Item) %>% 
+        distinct() %>% 
+        pull()
+
+practices_graphs <- map2(topics, "United States of America", graph_practices)
+```
+
+```{r Export Just the U.S.}
+filenames_practices_graphs <- paste0(topics, "us_only", ".pdf")
+
+ggsave_med <- partial(ggsave, device = "pdf", width = 10, height = 6, units = "in")
+
+map2(filenames_practices_graphs, practices_graphs, ggsave_med)
+```
 

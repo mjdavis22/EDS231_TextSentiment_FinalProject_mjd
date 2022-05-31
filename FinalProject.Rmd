@@ -1,5 +1,5 @@
 ---
-title: "Final Project"
+title: "EDS 231 Final Project"
 author: "Paloma Cartwright, Allie Cole, Wylie Hampson, Ben Moscona-Remnitz, Julia Parish"
 date: '2022-06-01'
 header-includes:
@@ -205,7 +205,7 @@ sent_score <- sent_score %>%
 
 ## Create a Plot of Sentiment Scores 
 
-```{r, fig.cap="News article text sentiment analysis from 1990 to 2021. The raw sentiment score (purple) and offset sentiment score (red) ... Data Source: Nexis Uni."}
+```{r, fig.cap="News article text sentiment analysis from 1990 to 2021. The raw sentiment score is in blue and offset sentiment score is red. Data Source: Nexis Uni."}
 
 text_sent <- ggplot(sent_score, aes(x = year)) +
   geom_bar(aes(y = raw_score), stat = 'identity', fill = 'slateblue3') +
@@ -245,7 +245,7 @@ slr_nrc_sent <- subset(slr_nrc_sent, !(sentiment %in% c("positive", "negative"))
 ```
 
 
-```{r, fig.cap="Data Source: Nexis Uni"}
+```{r, fig.cap="Individual words associated with the emotions within our sentiment analysis. The key takeaways from this figure are that most people associate food with joy and trust, there is a lot of anticipation around farming and production/conservation. However, many people are angry and fearful of pests, disease, and the government. Data Source: Nexis Uni, NRC Emotion Lexicon"}
 slr_nrc_sent_graph <- slr_nrc_sent %>% 
   group_by(sentiment) %>%
   slice_max(n, n = 20) %>% 
@@ -290,7 +290,8 @@ slr_nrc_sent2 <- slr_nrc_sent2 %>%
 
 ### Daily Percentage of Sentiment Words 
 
-```{r, fig.cap="Data Source: Nexis Uni, NRC Emotion Lexicon"}
+```{r, fig.cap="This analysis shows how emotions are changing over time. Trust had an overwhelming percentage in the articles, across the entire time period, but decreased as time went on. The second most used emotion was anticipation, which had a very slight increase as time went on. Joy increased the most, and was the third most used emotion. All the other emotions were very similar in percentage used. There was also an interesting increase in disgust over time. Data Source: Nexis Uni, NRC Emotion Lexicon"}
+
 sent_words <- ggplot(data = slr_nrc_sent2, aes(x = year, y = percentage, color = sentiment)) + 
   geom_smooth(method = lm, se = FALSE) + 
   theme_classic() + 
@@ -307,7 +308,6 @@ sent_words
 ```{r}
 #ggsave("graphs/sentiment_words.png", width = 10, height = 6, units = "in")
 ```
-
 
 # Number of Sustainable Farming News Articles: 1990 - 2021
 
@@ -424,11 +424,11 @@ practices_graphs <- map(topics, graph_practices)
 ```
 
 ```{r Export Practices Graphs}
-filenames_practices_graphs <- paste0(topics, ".jpg")
-
-ggsave_med <- partial(ggsave, device = "jpg", width = 10, height = 6, units = "in")
-
-map2(filenames_practices_graphs, practices_graphs, ggsave_med)
+# filenames_practices_graphs <- paste0(topics, ".jpg")
+# 
+# ggsave_med <- partial(ggsave, device = "jpg", width = 10, height = 6, units = "in")
+# 
+# map2(filenames_practices_graphs, practices_graphs, ggsave_med)
 ```
 
 Let's adjust the summary we made earlier by adding a country grouping
@@ -465,10 +465,10 @@ practices_graphs <- map2(topics, "United States of America", graph_practices)
 ```
 
 ```{r Export Just the U.S.}
-filenames_practices_graphs <- paste0(topics, "us_only", ".jpg")
-
-ggsave_med <- partial(ggsave, device = "jpg", width = 10, height = 6, units = "in")
-
-map2(filenames_practices_graphs, practices_graphs, ggsave_med)
+# filenames_practices_graphs <- paste0(topics, "us_only", ".jpg")
+# 
+# ggsave_med <- partial(ggsave, device = "jpg", width = 10, height = 6, units = "in")
+# 
+# map2(filenames_practices_graphs, practices_graphs, ggsave_med)
 ```
 

@@ -2,6 +2,8 @@
 
 ### Authors: Paloma Cartwright, Allie Cole, Wylie Hampson, Ben Moscona-Remnitz, Julia Parish
 
+Hello future Melanie this is past Melanie.
+
 ## Assignment:
 
 Original assignment instructions can be found [here](https://maro406.github.io/EDS_231-text-sentiment/Group_Project.html)
